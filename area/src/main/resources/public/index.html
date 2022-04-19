@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+
+<body>
+	<div linkage>
+		省/直辖市：<select selt>
+			<option>--请选择--</option>
+		</select>
+		市：<select>
+			<option>--请选择--</option>
+		</select>
+		区/县/地级市：<select>
+			<option>--请选择--</option>
+		</select>
+		街道/镇：<select>
+			<option>--请选择--</option>
+		</select>
+		社区/乡村：<select>
+			<option>--请选择--</option>
+		</select>
+	</div>
+
+
+</body>
+
+</html>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$.post("http://localhost:8080/area/getAllProvince", function (data) {
+			$("[selt]").empty();
+			$(data).each(function (i, val) {
+				if(i==0){
+					$("[selt]").append('<option selected value=' + val.id + '>' + val.name + '</option>').trigger("change");
+				}else{
+					$("[selt]").append('<option value=' + val.id + '>' + val.name + '</option>');
+				}
+			});
+		});
+
+
+		var selts = $("[linkage]").children("select");
+		$(selts).change(function () {
+			var thiz = $(this);
+			thiz.nextAll().empty();
+			var id = $(this).children('option:selected').val();
+			console.log(id);
+			$.post("http://localhost:8080/area/get/" + id, function (data) {
+				thiz.nextAll().empty();
+				$(data).each(function (i, val) {
+					if(i==0){
+						thiz.next().append('<option selected value=' + val.id + 'selected>' + val.name + '</option>').trigger("change");
+					}else{
+						thiz.next().append('<option value=' + val.id + '>' + val.name + '</option>');
+					}
+				});
+			});
+		});
+
+	})
+</script>
